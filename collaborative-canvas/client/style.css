@@ -1,0 +1,78 @@
+/* client/style.css */
+body { margin: 0; font-family: Arial, sans-serif; background: #f6f7fb; }
+#toolbar {
+  position: sticky;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px;
+  width: fit-content;
+  margin: 15px auto;
+  z-index: 10;
+}
+
+#toolbar button { background:transparent; border:none; cursor:pointer; padding:8px; border-radius:8px; }
+#toolbar button:hover { background:#efefef; }
+#toolbar i { font-size:18px; color:#333; }
+canvas { display:block; margin:18px auto; background:#fff; border:1px solid #ddd; touch-action:none; }
+
+
+/* 🎨 Fancy Color Picker Styling */
+#colorPicker {
+  appearance: none;               /* remove default browser look */
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#colorPicker:hover {
+  transform: scale(1.1);
+  border-color: #999;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 🟢 Make the inside circle match the chosen color */
+#colorPicker::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+}
+
+#colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+/* 🌟 Add a glowing ring when active */
+#colorPicker:focus {
+  outline: none;
+  
+  transform: scale(1.15);
+}
+
+#userCount {
+  margin-left: auto;
+  font-weight: 500;
+  color: #333;
+  background: #f8f8f8;
+  border-radius: 8px;
+  padding: 6px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+
+
