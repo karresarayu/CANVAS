@@ -1,34 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Collaborative Canvas</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="A real-time collaborative drawing application" />
+    <meta name="theme-color" content="#007bff" />
+    <title>Collaborative Canvas</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
 </head>
 <body>
-  <div id="toolbar">
-    <button id="brushBtn" title="Brush"><i class="fa-solid fa-paintbrush"></i></button>
-    <button id="eraserBtn" title="Eraser"><i class="fa-solid fa-eraser"></i></button>
-    <input type="color" id="colorPicker" value="#000000" />
-    <input type="range" id="sizePicker" min="1" max="40" value="5" />
-    <button id="undoBtn" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
-    <button id="redoBtn" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
-    <button id="clearBtn" title="Clear Canvas"><i class="fa-solid fa-trash"></i></button>
-    <button id="downloadBtn" title="Download"><i class="fa-solid fa-download"></i></button>
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal hidden">
+        <h2>Welcome to Collaborative Canvas</h2>
+        <div class="auth-tabs">
+            <button class="auth-tab active" data-tab="login">Login</button>
+            <button class="auth-tab" data-tab="signup">Sign Up</button>
+        </div>
+        <form id="loginForm" class="auth-form">
+            <input type="text" placeholder="Username" required />
+            <input type="password" placeholder="Password" required />
+            <button type="submit">Login</button>
+        </form>
+        <form id="signupForm" class="auth-form hidden">
+            <input type="text" placeholder="Choose Username" required />
+            <input type="password" placeholder="Choose Password" required />
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
 
-    <div id="userCount">👥 Users Online: 0</div>
+    <!-- Main Canvas Area -->
+    <div class="canvas-container">
+        <canvas id="drawingCanvas"></canvas>
+        
+        <!-- Toolbar -->
+        <div id="toolbar">
+            <button id="brushBtn" title="Brush" class="active">
+                <i class="fa-solid fa-paintbrush"></i>
+            </button>
+            <button id="eraserBtn" title="Eraser">
+                <i class="fa-solid fa-eraser"></i>
+            </button>
+            <div class="tool-separator"></div>
+            <div id="colorPickerContainer">
+                <div id="colorPicker"></div>
+            </div>
+            <input type="range" id="sizePicker" min="1" max="40" value="5" title="Brush Size" />
+            <div class="tool-separator"></div>
+            <button id="undoBtn" title="Undo" disabled>
+                <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button id="redoBtn" title="Redo" disabled>
+                <i class="fa-solid fa-rotate-right"></i>
+            </button>
+            <div class="tool-separator"></div>
+            <button id="clearBtn" title="Clear Canvas">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+            <button id="downloadBtn" title="Download">
+                <i class="fa-solid fa-download"></i>
+            </button>
+        </div>
 
-  </div>
+        <!-- User Count Badge -->
+        <div id="userCount">
+            <i class="fa-solid fa-users"></i>
+            <span>0</span> online
+        </div>
+    </div>
 
-  <canvas id="drawingCanvas"></canvas>
-  <div id="colorPicker"></div>
-<script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
-
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="main.js"></script>
- 
-
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="websocket.js"></script>
+    <script src="canvas.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

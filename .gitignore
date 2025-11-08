@@ -1,0 +1,10 @@
+# Ignore node_modules and environment files
+node_modules/
+*.log
+.env
+.DS_Store
+.vscode/
+
+# If project is in subfolder
+collaborative-canvas/node_modules/
+collaborative-canvas/.env

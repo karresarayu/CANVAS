@@ -1,28 +1,142 @@
 // client/main.js
-const socket = io();
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize color picker
+    const pickr = Pickr.create({
+        el: '#colorPicker',
+        theme: 'classic',
+        default: '#000000',
+        swatches: [
+            '#000000', '#ff0000', '#00ff00', '#0000ff',
+            '#ffff00', '#00ffff', '#ff00ff', '#ffffff'
+        ],
+        components: {
+            preview: true,
+            opacity: true,
+            hue: true,
+            interaction: {
+                input: true,
+                save: true
+            }
+        }
+    });
 
-const canvas = document.getElementById("drawingCanvas");
-const ctx = canvas.getContext("2d");
+    // Color picker events
+    pickr.on('change', (color) => {
+        const hexColor = color.toHEXA().toString();
+        canvasManager.setColor(hexColor);
+    });
 
-// Adjust canvas size dynamically
-function resizeCanvas() {
-  canvas.width = Math.min(window.innerWidth - 40, 1200);
-  canvas.height = Math.min(window.innerHeight - 140, 800);
-  socket.emit("request_init");
-}
-window.addEventListener("resize", resizeCanvas);
-resizeCanvas();
+    // Tool event listeners
+    document.getElementById('brushBtn').addEventListener('click', () => {
+        canvasManager.setTool('brush');
+        brushBtn.classList.add('active');
+        eraserBtn.classList.remove('active');
+    });
 
-// Drawing variables
-let drawing = false;
-let tool = "brush";
-let color = "#000000";
-let size = 5;
-let currentStroke = [];
+    document.getElementById('eraserBtn').addEventListener('click', () => {
+        canvasManager.setTool('eraser');
+        eraserBtn.classList.add('active');
+        brushBtn.classList.remove('active');
+    });
 
-// UI elements
-const brushBtn = document.getElementById("brushBtn");
-const eraserBtn = document.getElementById("eraserBtn");
+    document.getElementById('clearBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear the canvas?')) {
+            canvasManager.clearCanvas();
+        }
+    });
+
+    document.getElementById('undoBtn').addEventListener('click', () => {
+        canvasManager.undo();
+    });
+
+    document.getElementById('redoBtn').addEventListener('click', () => {
+        canvasManager.redo();
+    });
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        canvasManager.downloadCanvas();
+    });
+
+    document.getElementById('sizePicker').addEventListener('input', (e) => {
+        canvasManager.setSize(parseInt(e.target.value));
+    });
+
+    // Authentication handling
+    const authModal = document.getElementById('authModal');
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const authTabs = document.querySelectorAll('.auth-tab');
+
+    // Show auth modal if no token
+    if (!localStorage.getItem('token')) {
+        authModal.classList.remove('hidden');
+    }
+
+    // Tab switching
+    authTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetForm = tab.dataset.tab === 'login' ? loginForm : signupForm;
+            const otherForm = tab.dataset.tab === 'login' ? signupForm : loginForm;
+            
+            authTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            targetForm.classList.remove('hidden');
+            otherForm.classList.add('hidden');
+        });
+    });
+
+    // Handle login
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = loginForm.querySelector('input[type="text"]').value;
+        const password = loginForm.querySelector('input[type="password"]').value;
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                authModal.classList.add('hidden');
+                window.location.reload();
+            } else {
+                alert(data.message || 'Login failed');
+            }
+        } catch (error) {
+            alert('Login failed. Please try again.');
+        }
+    });
+
+    // Handle signup
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = signupForm.querySelector('input[type="text"]').value;
+        const password = signupForm.querySelector('input[type="password"]').value;
+
+        try {
+            const response = await fetch('/api/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await response.json();
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                authModal.classList.add('hidden');
+                window.location.reload();
+            } else {
+                alert(data.message || 'Signup failed');
+            }
+        } catch (error) {
+            alert('Signup failed. Please try again.');
+        }
+    });
+});
 const undoBtn = document.getElementById("undoBtn");
 const redoBtn = document.getElementById("redoBtn");
 const clearBtn = document.getElementById("clearBtn");
